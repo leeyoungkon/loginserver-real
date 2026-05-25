@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: delivery-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/auth-url: "http://authserver.default.svc.cluster.local:8080/api/auth/validate"
+    nginx.ingress.kubernetes.io/auth-method: "GET"
+    nginx.ingress.kubernetes.io/auth-response-headers: "X-Authenticated-User"
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /delivery(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: delivery-service
+                port:
+                  number: 80

@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 | Login Server</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f3efe6;
+            --ink: #1f2a36;
+            --card: #fffdf7;
+            --accent: #0f766e;
+            --accent-strong: #115e59;
+            --danger: #b91c1c;
+            --ring: rgba(15, 118, 110, 0.18);
+            --line: #ddd6c8;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "IBM Plex Sans KR", sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 80% 0%, #d1fae5 0, transparent 35%),
+                radial-gradient(circle at 15% 100%, #fde68a 0, transparent 40%),
+                linear-gradient(160deg, #f8f3e8, #edf4ff 60%, #f2f7f2);
+            display: grid;
+            place-items: center;
+            padding: 24px;
+        }
+
+        .panel {
+            width: min(440px, 100%);
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            box-shadow: 0 20px 40px rgba(31, 42, 54, 0.12);
+            padding: 30px 26px 24px;
+            animation: panel-in 480ms ease-out both;
+        }
+
+        .eyebrow {
+            margin: 0;
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 12px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--accent-strong);
+            opacity: 0;
+            animation: reveal 420ms ease-out 120ms forwards;
+        }
+
+        h1 {
+            margin: 8px 0 8px;
+            font-family: "Space Grotesk", sans-serif;
+            font-size: clamp(24px, 4.5vw, 30px);
+            line-height: 1.2;
+            opacity: 0;
+            animation: reveal 420ms ease-out 180ms forwards;
+        }
+
+        .desc {
+            margin: 0 0 20px;
+            color: #4b5563;
+            font-size: 14px;
+            opacity: 0;
+            animation: reveal 420ms ease-out 240ms forwards;
+        }
+
+        form {
+            display: grid;
+            gap: 12px;
+            opacity: 0;
+            animation: reveal 420ms ease-out 300ms forwards;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+            display: block;
+        }
+
+        input {
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 11px 12px;
+            font-size: 15px;
+            background: #ffffff;
+            color: var(--ink);
+            transition: border-color 160ms ease, box-shadow 160ms ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--ring);
+        }
+
+        button {
+            margin-top: 8px;
+            border: 0;
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #ffffff;
+            background: linear-gradient(135deg, var(--accent), #0a8f85);
+            cursor: pointer;
+            transition: transform 140ms ease, filter 140ms ease;
+        }
+
+        button:hover {
+            filter: brightness(1.02);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+            transform: none;
+        }
+
+        .message {
+            min-height: 22px;
+            margin-top: 14px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .message.success {
+            color: #166534;
+        }
+
+        .message.error {
+            color: var(--danger);
+        }
+
+        @keyframes panel-in {
+            from {
+                transform: translateY(12px) scale(0.98);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes reveal {
+            from {
+                transform: translateY(6px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .panel {
+                padding: 24px 18px 20px;
+                border-radius: 14px;
+            }
+
+            input,
+            button {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+<section class="panel" aria-label="회원가입 폼">
+    <p class="eyebrow">Account Setup</p>
+    <h1>회원가입</h1>
+    <p class="desc">ID와 비밀번호를 입력하면 Auth Server를 통해 사용자 정보가 등록됩니다.</p>
+
+    <form id="registerForm">
+        <div>
+            <label for="id">ID</label>
+            <input id="id" name="id" type="text" required minlength="3" maxlength="50" autocomplete="username" placeholder="예: honggildong">
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" required minlength="4" maxlength="100" autocomplete="new-password" placeholder="비밀번호를 입력하세요">
+        </div>
+        <button id="submitButton" type="submit">등록하기</button>
+    </form>
+
+    <p id="message" class="message" role="status" aria-live="polite"></p>
+</section>
+
+<script>
+    const form = document.getElementById('registerForm');
+    const submitButton = document.getElementById('submitButton');
+    const message = document.getElementById('message');
+
+    function showMessage(text, type) {
+        message.textContent = text;
+        message.className = 'message ' + type;
+    }
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const id = document.getElementById('id').value.trim();
+        const password = document.getElementById('password').value;
+
+        if (!id || !password) {
+            showMessage('ID와 비밀번호를 모두 입력해 주세요.', 'error');
+            return;
+        }
+
+        submitButton.disabled = true;
+        showMessage('등록 요청 중입니다...', '');
+
+        try {
+            const response = await fetch('/api/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id, password })
+            });
+
+            let payload = null;
+            const contentType = response.headers.get('content-type') || '';
+            if (contentType.includes('application/json')) {
+                payload = await response.json();
+            } else {
+                payload = await response.text();
+            }
+
+            if (response.ok) {
+                const detail = typeof payload === 'string' ? payload : JSON.stringify(payload);
+                showMessage('회원가입 완료: ' + detail, 'success');
+                form.reset();
+            } else {
+                const detail = typeof payload === 'string' ? payload : JSON.stringify(payload);
+                showMessage('회원가입 실패: ' + detail, 'error');
+            }
+        } catch (error) {
+            showMessage('요청 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.', 'error');
+        } finally {
+            submitButton.disabled = false;
+        }
+    });
+</script>
+</body>
+</html>

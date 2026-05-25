@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 | Login Server</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #fff8ef;
+            --ink: #1f2937;
+            --card: #fffdf9;
+            --accent: #b45309;
+            --accent-strong: #92400e;
+            --line: #e5d7c7;
+            --success: #166534;
+            --danger: #b91c1c;
+            --ring: rgba(180, 83, 9, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "IBM Plex Sans KR", sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 0% 0%, #fde68a 0, transparent 35%),
+                radial-gradient(circle at 100% 100%, #fecaca 0, transparent 35%),
+                linear-gradient(155deg, #fff6ea, #fef7ed 50%, #fff1dc);
+            display: grid;
+            place-items: center;
+            padding: 24px;
+        }
+
+        .card {
+            width: min(460px, 100%);
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            box-shadow: 0 20px 40px rgba(31, 41, 55, 0.14);
+            padding: 30px 26px 24px;
+            animation: cardIn 460ms ease-out both;
+        }
+
+        .eyebrow {
+            margin: 0;
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 12px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--accent-strong);
+        }
+
+        h1 {
+            margin: 8px 0 6px;
+            font-family: "Space Grotesk", sans-serif;
+            font-size: clamp(24px, 4.5vw, 30px);
+        }
+
+        .desc {
+            margin: 0 0 18px;
+            color: #4b5563;
+            font-size: 14px;
+        }
+
+        form {
+            display: grid;
+            gap: 12px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            border: 1px solid #d6d3d1;
+            border-radius: 10px;
+            padding: 11px 12px;
+            font-size: 15px;
+            background: #fff;
+            transition: border-color 160ms ease, box-shadow 160ms ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--ring);
+        }
+
+        button {
+            margin-top: 8px;
+            border: 0;
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+            background: linear-gradient(135deg, #b45309, #d97706);
+            cursor: pointer;
+            transition: transform 120ms ease, filter 120ms ease;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.02);
+        }
+
+        button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .message {
+            min-height: 20px;
+            margin: 14px 0 10px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .message.success {
+            color: var(--success);
+        }
+
+        .message.error {
+            color: var(--danger);
+        }
+
+        @keyframes cardIn {
+            from {
+                transform: translateY(12px) scale(0.98);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 24px 18px 20px;
+                border-radius: 14px;
+            }
+
+            input,
+            button {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+<section class="card" aria-label="로그인 폼">
+    <p class="eyebrow">User Login</p>
+    <h1>로그인</h1>
+    <p class="desc">회원가입한 ID와 비밀번호를 입력하면 바로 로그인되어 Delivery 서비스로 이동합니다.</p>
+
+    <form id="loginForm">
+        <div>
+            <label for="id">ID</label>
+            <input id="id" name="id" type="text" required autocomplete="username" placeholder="예: honggildong">
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" required autocomplete="current-password" placeholder="비밀번호를 입력하세요">
+        </div>
+        <button id="submitButton" type="submit">로그인</button>
+    </form>
+
+    <p id="message" class="message" role="status" aria-live="polite"></p>
+</section>
+
+<script>
+    const form = document.getElementById('loginForm');
+    const submitButton = document.getElementById('submitButton');
+    const message = document.getElementById('message');
+
+    function showMessage(text, type) {
+        message.textContent = text;
+        message.className = 'message ' + type;
+    }
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const id = document.getElementById('id').value.trim();
+        const password = document.getElementById('password').value;
+
+        if (!id || !password) {
+            showMessage('ID와 비밀번호를 모두 입력해 주세요.', 'error');
+            return;
+        }
+
+        submitButton.disabled = true;
+        showMessage('로그인 중입니다...', '');
+
+        try {
+            const response = await fetch('/api/login/token', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id, password })
+            });
+
+            const contentType = response.headers.get('content-type') || '';
+            let payload;
+            if (contentType.includes('application/json')) {
+                payload = await response.json();
+            } else {
+                payload = await response.text();
+            }
+
+            if (response.ok) {
+                const token = payload && payload.token ? payload.token : '';
+                if (token) {
+                    document.cookie = "token=" + encodeURIComponent(token) + "; path=/; SameSite=Lax";
+                    showMessage('로그인 성공! Delivery 서비스로 이동합니다...', 'success');
+                    window.location.href = '/delivery';
+                } else {
+                    showMessage('로그인 성공이지만 토큰이 없습니다.', 'error');
+                }
+            } else {
+                const detail = typeof payload === 'string' ? payload : JSON.stringify(payload);
+                showMessage('로그인 실패: ' + detail, 'error');
+            }
+        } catch (error) {
+            showMessage('요청 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.', 'error');
+        } finally {
+            submitButton.disabled = false;
+        }
+    });
+</script>
+</body>
+</html>
